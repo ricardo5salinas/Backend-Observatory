@@ -2,7 +2,7 @@ import { pool } from '../db.js';
 
 async function run() {
   try {
-    const r = await pool.query('SELECT id, email, password FROM public."User" ORDER BY id DESC LIMIT 20');
+    const r = await pool.query('SELECT id, email FROM public."User" ORDER BY id DESC LIMIT 20');
     console.log('Found', r.rows.length, 'users');
     console.log(r.rows);
   } catch (err) {

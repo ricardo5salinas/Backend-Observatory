@@ -1,25 +1,33 @@
 import { z } from 'zod'
 
-// CORRECCIÓN #17: En el schema original, 'name' era opcional (.optional()) en
-// userCreateSchema. Esto permitía crear usuarios sin nombre, lo cual es
-// inconsistente con la validación del controlador que no requiere name tampoco.
-// Se hace requerido para mantener datos consistentes en la BD.
-// Si tu flujo de negocio permite usuarios sin nombre, revierte este cambio.
-export const userCreateSchema = z.object({
-  first_name: z.string().min(1),    
-      // requerido en creación
-  email: z.string().email(),
-  password: z.string().min(6),
-  role: z.string().optional(),
-  // CORRECCIÓN #18: status como z.union([z.string(), z.boolean()]) aceptaba
-  // cualquier string como estado válido (ej: "foo", "activo", "whatever").
-  // Se restringe a valores conocidos para evitar estados inválidos en BD.
-  status: z.enum(['active', 'inactive', 'deleted']).optional(),
-})
+const trimmedString = z.string().trim()
 
-export const userUpdateSchema = userCreateSchema.partial()
+const statusSchema = z.union([
+  z.enum(['active', 'inactive', 'deleted']),
+  z.boolean(),
+])
+
+const userSchemaBase = z.object({
+  name: trimmedString.min(1).optional(),
+  first_name: trimmedString.min(1).optional(),
+  last_name: trimmedString.min(1).optional(),
+  email: trimmedString.email(),
+  password: z.string().min(6),
+  role_id: z.coerce.number().int().positive().optional(),
+  role: z.union([trimmedString.min(1), z.coerce.number().int().positive()]).optional(),
+  status: statusSchema.optional(),
+}).strict()
+
+export const userCreateSchema = userSchemaBase.refine(
+  data => Boolean(data.name || data.first_name),
+  { message: 'name o first_name es requerido', path: ['name'] },
+)
+
+export const userUpdateSchema = userSchemaBase
+  .partial()
+  .strict()
 
 export const loginSchema = z.object({
-  email: z.string().email(),
+  email: trimmedString.email(),
   password: z.string().min(1),
-})
+}).strict()

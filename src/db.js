@@ -22,7 +22,7 @@ const poolConfig = connectionString
       user: process.env.DB_USER || "postgres",
       host: process.env.DB_HOST || "localhost",
       
-      password: process.env.DB_PASSWORD,
+      password: process.env.DB_PASSWORD || '',
       database: process.env.DB_NAME || "Observatory",
       port: Number(process.env.DB_PORT) || 5432
     }
@@ -56,7 +56,7 @@ pool.on('error', (err) => {
 })
 
 
-if (!isProduction) {
+if (!isProduction && process.env.DB_CHECK_ON_START === 'true') {
   pool.connect()
     .then(client => client.release())
     .catch(err => {
