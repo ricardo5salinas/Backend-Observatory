@@ -8,7 +8,7 @@ const server = app.listen(PORT, () => {
 })
 
 const shutdown = async (signal) => {
-  console.log(`${signal} received — shutting down gracefully`)
+  console.log(`${signal} received - shutting down gracefully`)
   server.close(async () => {
     await pool.end()
     console.log('Database pool closed. Process exit.')

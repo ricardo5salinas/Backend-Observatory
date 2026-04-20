@@ -7,11 +7,15 @@ const USER_WRITE_FIELDS = new Set([
   'name',
   'first_name',
   'last_name',
+  'dni',
   'email',
   'password',
   'pass',
   'password_hash',
+  'phone',
   'role_id',
+  'last_login',
+  'profile_image_url',
   'status',
 ]);
 
@@ -96,12 +100,13 @@ const getRoleByName = async (roleName) => {
 
 const resolveRoleId = async (body) => {
   if (body.role_id !== undefined) return body.role_id;
-  if (body.role === undefined) return undefined;
+  const roleValue = body.role !== undefined ? body.role : body.role_name;
+  if (roleValue === undefined) return undefined;
 
-  if (typeof body.role === 'number') return body.role;
-  if (typeof body.role === 'string' && /^\d+$/.test(body.role)) return Number(body.role);
+  if (typeof roleValue === 'number') return roleValue;
+  if (typeof roleValue === 'string' && /^\d+$/.test(roleValue)) return Number(roleValue);
 
-  const role = await getRoleByName(body.role);
+  const role = await getRoleByName(roleValue);
   return role ? role.id : undefined;
 };
 
