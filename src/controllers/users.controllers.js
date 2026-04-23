@@ -66,7 +66,15 @@ export const login = async (req, res) => {
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET || 'change_this_secret', { expiresIn: '1h' });
 
-    return res.status(200).json({ ok: true, token, user: sanitizeUser(user) });
+    const safeUser = sanitizeUser(user);
+    return res.status(200).json({
+      ok: true,
+      token,
+      user: safeUser,
+      userId: safeUser?.id ?? null,
+      roleId: safeUser?.role_id ?? null,
+      roleName: safeUser?.role_name ?? null,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ ok: false, error: 'Error al autenticar usuario' });
