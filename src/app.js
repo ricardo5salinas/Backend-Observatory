@@ -12,6 +12,7 @@ const app = express();
 
 const whiteList = [
   'https://69854eaa7b59a6000863d342--serene-douhua-3515f7.netlify.app',
+  'https://serene-douhua-3515f7.netlify.app',
   'http://localhost:3000',
   'http://localhost:5173'
 ];
@@ -30,6 +31,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 
