@@ -39,6 +39,19 @@ export const userUpdateSchema = userSchemaBase
   .strict()
 
 export const loginSchema = z.object({
-  email: trimmedString.email(),
+  email: trimmedString.email().optional(),
+  username: trimmedString.email().optional(),
+  identifier: trimmedString.email().optional(),
   password: z.string().min(1),
-}).strict()
+}).passthrough().superRefine((data, ctx) => {
+  if (!data.email && !data.username && !data.identifier) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['email'],
+      message: 'email es requerido',
+    })
+  }
+}).transform((data) => ({
+  email: data.email ?? data.username ?? data.identifier,
+  password: data.password,
+}))
