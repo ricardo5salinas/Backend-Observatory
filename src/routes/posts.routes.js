@@ -4,10 +4,11 @@ import {
   getPosts,
   getPostById,
   deletePost,
-  updatePost, // 1. Importamos el nuevo controlador
+  updatePost,
+  updatePostStatus,
 } from '../controllers/posts.controllers.js'
 import { validate } from '../middlewares/validate.middleware.js'
-import { postCreateSchema, postUpdateSchema } from '../schemas/posts.schema.js'
+import { postCreateSchema, postStatusUpdateSchema, postUpdateSchema } from '../schemas/posts.schema.js'
 
 const router = Router()
 
@@ -23,6 +24,9 @@ router.get('/posts/:id', getPostById)
 // 2. EDITAR POST (Ruta PUT)
 // Usamos el id por parámetro y validamos con el esquema de actualización
 router.put('/posts/:id', validate(postUpdateSchema), updatePost)
+
+// Cambiar solo el estatus del post
+router.patch('/posts/:id/status', validate(postStatusUpdateSchema), updatePostStatus)
 
 // Eliminar post
 router.delete('/posts/:id', deletePost)
