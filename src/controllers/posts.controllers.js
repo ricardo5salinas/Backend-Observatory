@@ -25,6 +25,28 @@ export const createPost = async (req, res) => {
   }
 };
 
+export const updatePostStatus = async (req, res) => {
+  const { id } = req.params
+  const { status } = req.body
+
+  try {
+    const post = await postsModel.updatePost(id, { status })
+
+    if (!post) {
+      return res.status(404).json({ ok: false, error: 'Post no encontrado' })
+    }
+
+    return res.status(200).json({
+      ok: true,
+      message: 'Estatus del post actualizado con éxito',
+      post,
+    })
+  } catch (error) {
+    console.error('Error en updatePostStatus:', error)
+    return res.status(500).json({ ok: false, error: 'Error al actualizar el estatus del post' })
+  }
+}
+
 export const getPosts = async (req, res) => {
   try {
     const posts = await postsModel.getAllPosts();
@@ -86,4 +108,4 @@ export const deletePost = async (req, res) => {
     console.error('Error en deletePost:', error);
     return res.status(500).json({ ok: false, error: 'Error al eliminar el post' });
   }
-};
+}
