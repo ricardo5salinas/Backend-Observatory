@@ -9,7 +9,10 @@ export const createAuthor = async (req, res) => {
     const author = await authorsModel.createAuthor({ name, bio, email })
     return res.status(201).json({ ok: true, author })
   } catch (error) {
-    console.error(error)
+    console.error('Error en createAuthor:', error)
+    if (error && error.code === '23505') {
+      return res.status(409).json({ ok: false, error: 'Ya existe un autor con esos datos' })
+    }
     return res.status(500).json({ ok: false, error: 'Error al crear el autor' })
   }
 }
@@ -44,7 +47,10 @@ export const updateAuthor = async (req, res) => {
     if (!author) return res.status(404).json({ ok: false, error: 'Autor no encontrado' })
     return res.status(200).json({ ok: true, author })
   } catch (error) {
-    console.error(error)
+    console.error('Error en updateAuthor:', error)
+    if (error && error.code === '23505') {
+      return res.status(409).json({ ok: false, error: 'Ya existe un autor con esos datos' })
+    }
     return res.status(500).json({ ok: false, error: 'Error al actualizar el autor' })
   }
 }
