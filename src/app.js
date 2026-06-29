@@ -15,12 +15,23 @@ const whiteList = [
   'https://69854eaa7b59a6000863d342--serene-douhua-3515f7.netlify.app',
   'https://serene-douhua-3515f7.netlify.app',
   'http://localhost:3000',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500'
 ];
 
 const allowedNetlifyHosts = [
   'serene-douhua-3515f7.netlify.app',
 ];
+
+const isAllowedLocalDevelopment = (origin) => {
+  try {
+    const url = new URL(origin);
+    return ['localhost', '127.0.0.1'].includes(url.hostname);
+  } catch (error) {
+    return false;
+  }
+};
 
 const isAllowedNetlifyPreview = (origin) => {
   try {
@@ -35,7 +46,12 @@ const isAllowedNetlifyPreview = (origin) => {
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || whiteList.indexOf(origin) !== -1 || isAllowedNetlifyPreview(origin)) {
+    if (
+      !origin ||
+      whiteList.indexOf(origin) !== -1 ||
+      isAllowedLocalDevelopment(origin) ||
+      isAllowedNetlifyPreview(origin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error('No permitido por CORS'));
