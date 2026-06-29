@@ -14,6 +14,7 @@ const app = express();
 const whiteList = [
   'https://69854eaa7b59a6000863d342--serene-douhua-3515f7.netlify.app',
   'https://serene-douhua-3515f7.netlify.app',
+  'https://sitio-web-observatorio.netlify.app',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:5500',
